@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "227874598931",
+    "project_id": "newcloud-cdd54",
+    "storage_bucket": "newcloud-cdd54.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:227874598931:android:f2288c18b89220caf58fe6",
+        "android_client_info": {
+          "package_name": "com.example.fcmdemo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "227874598931-lb7g141e722o7hang3n0tfs370judmal.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyPLB2zMgXzPwBE_Jb80FzBcE85okgvXU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "227874598931-lb7g141e722o7hang3n0tfs370judmal.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
