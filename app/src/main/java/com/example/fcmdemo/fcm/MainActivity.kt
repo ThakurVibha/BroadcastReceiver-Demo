@@ -35,6 +35,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        val filter = IntentFilter()
+        filter.addAction("ACTION_INTENT")
+        registerReceiver(receiver,filter)
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -44,9 +50,9 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         configureReceiver()
-        val intent = Intent()
-        intent.action = "ACTION_INTENT"
-        sendBroadcast(intent)
+//        val intent = Intent()
+//        intent.action = "ACTION_INTENT"
+//        sendBroadcast(intent)
 
 //                val value2 = intent.getStringExtra("key")
 //                Toast.makeText(context, value1, Toast.LENGTH_SHORT).show()

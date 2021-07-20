@@ -3,6 +3,7 @@ package com.example.fcmdemo.fcm
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.net.Uri
@@ -27,6 +28,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             displayCustomNotificationForOrders(title!!, body!!)
         }
+
+        val intent1 = Intent("ACTION_INTENT")
+        sendBroadcast(intent1)
 //        Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification()!!.getBody());
 //
 //
