@@ -5,7 +5,8 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,12 +14,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FCMDemo">
-        <activity android:name=".broadcastreceiver.alarmapp.AlarmClockActivity"/>
-
+        <activity android:name=".fcm.DashboardActivity" />
+        <activity android:name=".broadcastreceiver.alarmapp.AlarmClockActivity" />
         <activity android:name=".broadcastreceiver.wifichange.WifiReceiverActivity" />
         <activity android:name=".broadcastreceiver.airplanemodechange.AirplaneModeChangeActivity" />
-        <activity android:name=".broadcastreceiver.batterylevel.BatteryBroadcastActivity"/>
-            <activity android:name=".fcm.MainActivity">
+        <activity android:name=".broadcastreceiver.batterylevel.BatteryBroadcastActivity" />
+        <activity android:name=".broadcastreceiver.demobroadcast.BroadcastActivity" />
+        <activity android:name=".fcm.MainActivity"/>
+
+        <activity android:name=".maps.GoogleMapsActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,19 +35,24 @@
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
-        <service android:name=".fcm.MyFirebaseInstanceIDService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
+        </service> <!-- <service android:name=".fcm.MyFirebaseInstanceIDService"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="com.google.firebase.INSTANCE_ID_EVENT" /> -->
+        <!-- </intent-filter> -->
+        <!-- </service> -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAPTXoOu-rV2w05F2oirVVxlYcEWLW4XIc" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
-        <receiver android:name=".broadcastreceiver.airplanemodechange.AirplaneModeChangeReceiver">
+
+        <receiver android:name=".fcm.MyMessagingActivity">
             <intent-filter>
-                <action android:name="android.intent.action.AIRPLANE_MODE" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

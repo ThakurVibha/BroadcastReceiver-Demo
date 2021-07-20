@@ -8,7 +8,6 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -20,17 +19,45 @@ import com.google.firebase.messaging.RemoteMessage
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     private var mChannel: NotificationChannel? = null
     private var notifManager: NotificationManager? = null
-    private var TAG = "MyFirebaseMessagingService"
+    var TAG = "//"
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.e(TAG, "FROM : " + remoteMessage.from + "${Thread.currentThread().name}")
-//        Toast.makeText(this, "hiiii", Toast.LENGTH_SHORT).show()
-
+        Log.e(TAG, remoteMessage.data.toString())
         val title = remoteMessage.notification!!.title
         val body = remoteMessage.notification!!.body
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            displayCustomNotificationForOrders(title!!,body!!)
+            displayCustomNotificationForOrders(title!!, body!!)
         }
+//        Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification()!!.getBody());
+//
+//
+//        if ((title!= null) &&(body!=null)){
+//            sendBroadcast(title, body)
+//
+//        };
+// Check if message contains a data payload.
+        if (remoteMessage.getData().size > 0) {
+            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+        }
+        // Check if message contains a notification payload.
+        if (remoteMessage.getNotification() != null) {
+            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification()!!.getBody());
+            sendNotification(remoteMessage)
+            val intent = Intent()
+            intent.action = "ACTION_INTENT"
+//            intent.putExtra("title", title)
+//            intent.putExtra("body", body)
+            sendBroadcast(intent)
+        }
+
+//        val intent = Intent(this, MainActivity::class.java)
+//        intent.putExtra("SOME_ACTION", SOME_ACTION);
+//        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+//      var  broadcaster = LocalBroadcastManager.getInstance(baseContext)
+//
+//        val intent = Intent()
+//        intent.putExtra("Key", title)
+//        intent.putExtra("key", body)
+//        broadcaster.sendBroadcast(intent)
 //        //Verify if the message contains data
 //        if (remoteMessage.data.isNotEmpty()) {
 //
@@ -47,10 +74,19 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 //        }
 
 
-//        val intent = Intent(this, MyBroadcastReceiver::class.java)
+//        val itent = Intent(this, MyBroadcastReceiver::class.java)
 //        val pendingIntent =
 //            PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
     }
+
+//    private fun sendBroadcast(title: String, body: String?) {
+//        val intent = Intent()
+//        intent.action = "ACTION_INTENT"
+//        intent.putExtra("title", title)
+//        intent.putExtra("body", body)
+//        intent.flags = Intent.FLAG_INCLUDE_STOPPED_PACKAGES
+//        sendBroadcast(intent)
+//    }
 
     @RequiresApi(Build.VERSION_CODES.M)
     fun displayCustomNotificationForOrders(title: String, description: String) {
@@ -99,9 +135,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .setSound(defaultSoundUri)
                 .setSmallIcon(getNotificationIcon())
                 .setContentIntent(pendingIntent)
-                .setStyle(NotificationCompat.BigTextStyle().setBigContentTitle(title).bigText(
-                    description))
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                .setStyle(
+                    NotificationCompat.BigTextStyle().setBigContentTitle(title).bigText(
+                        description
+                    )
+                )
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.notify(1251, notificationBuilder.build())
         }
     }
@@ -112,10 +152,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
 
-
-
-
-    private fun sendNotification(body: String?, remoteMessage: RemoteMessage) {
+    private fun sendNotification(body: RemoteMessage) {
 
         var intent = Intent(this, MainActivity::class.java)
         //If set, and the activity being launched is already running in the current task,
@@ -132,11 +169,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             PendingIntent.FLAG_ONE_SHOT/*Flag indicating that this PendingIntent can be used only once.*/
         )
         val notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-
         var notificationBuilder = NotificationCompat.Builder(this, "Notification")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle("Push Notification FCM")
-            .setContentText(body)
+            .setContentText(body.toString())
             .setAutoCancel(true)
             .setSound(notificationSound)
             .setContentIntent(pendingIntent)
@@ -148,6 +184,5 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
 
     }
-
 
 }

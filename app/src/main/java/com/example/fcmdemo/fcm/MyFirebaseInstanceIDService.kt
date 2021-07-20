@@ -10,7 +10,7 @@ class MyFirebaseInstanceIDService : FirebaseMessagingService() {
     fun onTokenRefresh() {
         //Get updated token
         var refreshedToken = FirebaseMessaging.getInstance().token
-        Log.d(TAG,"New Token : "+refreshedToken)
+        Log.d(TAG, "New Token : " + refreshedToken)
 
     }
 }

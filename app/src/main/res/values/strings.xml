@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FCMDemo</string>
+    <string name="maps_api_key">AIzaSyAPTXoOu-rV2w05F2oirVVxlYcEWLW4XIc</string>
 </resources>
