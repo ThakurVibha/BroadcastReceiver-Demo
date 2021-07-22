@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+
 }
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
@@ -17,6 +18,7 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -50,13 +52,15 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.1'
+    implementation 'com.google.android.libraries.places:places:2.4.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.android.volley:volley:1.2.0'
+    //google places api
+    implementation 'com.google.android.gms:play-services-places:17.0.0'
+//maps custer
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
 
-    //google play services
-    dependencies {
-        implementation 'com.google.android.gms:play-services-maps:17.0.1'
-    }
-    dependencies {
-        implementation 'com.google.android.libraries.places:places:2.4.0'
-    }
+
     // AIzaSyAPTXoOu-rV2w05F2oirVVxlYcEWLW4XIc
 }
