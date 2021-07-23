@@ -58,9 +58,8 @@ dependencies {
     implementation 'com.android.volley:volley:1.2.0'
     //google places api
     implementation 'com.google.android.gms:play-services-places:17.0.0'
-//maps custer
-    implementation 'com.google.maps.android:android-maps-utils:0.5+'
+    //maputils
+    implementation 'com.google.maps.android:android-maps-utils:1.1.0'
 
 
-    // AIzaSyAPTXoOu-rV2w05F2oirVVxlYcEWLW4XIc
 }

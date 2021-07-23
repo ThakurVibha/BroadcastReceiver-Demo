@@ -24,8 +24,9 @@
         <activity android:name=".broadcastreceiver.batterylevel.BatteryBroadcastActivity" />
         <activity android:name=".broadcastreceiver.demobroadcast.BroadcastActivity" />
         <activity android:name=".fcm.MainActivity" />
-        <activity android:name=".maps.demomaps.activities.GoogleMapsActivity" />
-        <activity android:name=".maps.demomaps.activities.StyleMapActivity">
+        <activity android:name=".maps.demomaps.activities.StyleMapActivity"/>
+        <activity android:name=".maps.demomaps.codelabmap.activities.CodelabMapActivity"/>
+            <activity android:name=".maps.demomaps.activities.GoogleMapsActivity" >
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
