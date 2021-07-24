@@ -1,6 +1,7 @@
 package com.example.fcmdemo.maps.demomaps.util
 
 import android.content.Context
+import android.graphics.Color
 import android.location.Address
 import android.location.Geocoder
 import android.util.Log
@@ -9,14 +10,25 @@ import com.example.myfirstapp.GoogleMaps.MarkerInfoWindowAdapter
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.google.maps.android.clustering.ClusterManager
 import java.io.IOException
 
 object MapsHelper {
+
+    fun drawPolygonApi(coordinates: List<List<Double>>, mMap: GoogleMap): Polyline {
+        val options = PolylineOptions()
+        for (i in coordinates.indices){
+            options.add(LatLng(coordinates[i][1], coordinates[i][0]))
+        }
+        options.clickable(true)
+            .width(15f)
+            .color(Color.BLUE)
+
+        val polyline1 = mMap.addPolyline(options)
+        polyline1.tag = "Api"
+        return polyline1
+    }
     //To get address of current location onMarkerClick
     fun getAddress(context: Context, location: LatLng): String {
         // 1
@@ -122,4 +134,7 @@ object MapsHelper {
 
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(28.644800, 77.216721), 4f))
 
-}}
+}
+
+
+}

@@ -24,7 +24,6 @@ class CodelabMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private val bicycleIcon: BitmapDescriptor by lazy {
         val color = ContextCompat.getColor(this, R.color.black)
         BitmapHelper.vectorToBitmap(this, R.drawable.bicycle, color)
-
     }
 
     //This code invokes the read() method on a PlacesReader, which returns a List<Place>

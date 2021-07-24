@@ -38,4 +38,6 @@ object MapUtils {
         val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.car)
         return Bitmap.createScaledBitmap(bitmap, 50, 100, false)
     }
+
+
 }

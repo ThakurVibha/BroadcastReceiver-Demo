@@ -20,8 +20,8 @@ class StyleMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private var greyPolyLine: Polyline? = null
     private var blackPolyLine: Polyline? = null
-    private var originMarker:Marker?=null
-    private var destinationMarker:Marker?=null
+    private var originMarker: Marker? = null
+    private var destinationMarker: Marker? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_style_map)
@@ -29,12 +29,12 @@ class StyleMapActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment2?.getMapAsync(this)
 
     }
-private fun addOriginDestinationMarkere(latLng: LatLng):Marker{
-    val bitmapDescriptor =
-        BitmapDescriptorFactory.fromBitmap(MapUtils.getOriginDestinationMarkerBitmap())
-    return map.addMarker(MarkerOptions().position(latLng).flat(true).icon(bitmapDescriptor))
 
-}
+    private fun addOriginDestinationMarkere(latLng: LatLng): Marker {
+        val bitmapDescriptor =
+            BitmapDescriptorFactory.fromBitmap(MapUtils.getOriginDestinationMarkerBitmap())
+        return map.addMarker(MarkerOptions().position(latLng).flat(true).icon(bitmapDescriptor))
+    }
 
     private fun moveCamera(latLng: LatLng) {
         map.moveCamera(CameraUpdateFactory.newLatLng(latLng))
@@ -72,11 +72,11 @@ private fun addOriginDestinationMarkere(latLng: LatLng):Marker{
         blackPolyLine = map.addPolyline(blackPolylineOptions)
 
         //setting marker
-        originMarker=addOriginDestinationMarkere(latLngList[0])
+        originMarker = addOriginDestinationMarkere(latLngList[0])
         originMarker?.setAnchor(0.5f, 0.5f)
         destinationMarker = addOriginDestinationMarkere(latLngList[latLngList.size - 1])
         destinationMarker?.setAnchor(0.5f, 0.5f)
-        val polyLineAnimator=AnimationUtils.polylineAnimator()
+        val polyLineAnimator = AnimationUtils.polylineAnimator()
         polyLineAnimator.addUpdateListener {
             val percentValue = (it.animatedValue as Int)
             val index = (greyPolyLine?.points!!.size) * (percentValue / 100.0f).toInt()

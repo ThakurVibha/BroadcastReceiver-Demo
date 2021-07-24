@@ -5,24 +5,31 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
-import android.view.View
+import android.util.Log
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.fcmdemo.R
-import com.example.fcmdemo.maps.demomaps.util.MapUtils
+import com.example.fcmdemo.maps.demomaps.activities.model.GoogleMapModel
+import com.example.fcmdemo.maps.demomaps.activities.utils.GoogleMapInterface
 import com.example.fcmdemo.maps.demomaps.util.MapsHelper
-import com.example.myfirstapp.GoogleMaps.MarkerInfoWindowAdapter
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.activity_google_maps.*
+import okhttp3.Interceptor
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 
 @Suppress("DEPRECATION")
@@ -34,17 +41,23 @@ class GoogleMapsActivity : AppCompatActivity(), OnMapReadyCallback,
     private val PATTERN_POLYLINE_DOTTED = listOf(GAP, DOT)
     private lateinit var map: GoogleMap
     var mapFragment: SupportMapFragment? = null
+    var latLongOrigin: LatLng? = null
+    var latLongDestination: LatLng? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     var TAG = "//"
     lateinit var locationCallback: LocationCallback
     lateinit var locationRequest: LocationRequest
     private var locationUpdateState = false
     private lateinit var lastLocation: Location
+    var isSource = true
+    private var grayPolyline: Polyline? = null
+    private var blackPolyline: Polyline? = null
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
         private const val REQUEST_CHECK_SETTINGS = 2
         private const val PLACE_PICKER_REQUEST = 3
+        private const val BASE_URL = "https://api.openrouteservice.org/v2/directions/"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,17 +69,98 @@ class GoogleMapsActivity : AppCompatActivity(), OnMapReadyCallback,
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         makeLocationCall()
         createLocationRequest()
+        onClick()
     }
-    fun searchLocation(view: View) {
-        val locationSearch:AutoCompleteTextView = findViewById<AutoCompleteTextView>(R.id.tvSource)
+
+    fun setPolyine(map: GoogleMap) {
+        val polyline1 = map.addPolyline(
+            PolylineOptions()
+                .clickable(true)
+                .add(
+                    //28.5355° N, 77.3910° E
+                    latLongOrigin,
+                    latLongDestination
+                )
+        )
+        polyline1.tag = "A"
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(28.644800, 77.216721), 4f))
+    }
+
+
+    private fun drawRoutes() {
+        var retrofit =
+            Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create())
+                .build()
+        var googleMapInterface: GoogleMapInterface = retrofit.create(GoogleMapInterface::class.java)
+        latLongOrigin?.let {
+            googleMapInterface.getRoutes(
+                "${it.longitude},${it.latitude}",
+                "${latLongDestination!!.longitude},${latLongDestination!!.latitude}"
+            )
+                .enqueue(object : Callback<GoogleMapModel> {
+                    override fun onResponse(
+                        call: Call<GoogleMapModel>,
+                        response: Response<GoogleMapModel>
+                    ) {
+                        val coordinates = response.body()!!.features[0].geometry.coordinates
+                        MapsHelper.drawPolygonApi(coordinates, mMap = map)
+                    }
+                    override fun onFailure(call: Call<GoogleMapModel>, t: Throwable) {
+                        Log.e(TAG, t.localizedMessage)
+                    }
+                })
+        }
+    }
+    private fun onClick() {
+        isSource = false
+        floatingActionButton.setOnClickListener {
+            if (isSource) {
+                searchLocation()
+                setPolyine(map)
+            } else {
+                searchLocation()
+                searchDestination()
+            }
+        }
+    }
+
+    fun searchLocation() {
+        isSource = false
+        val locationSource: AutoCompleteTextView = findViewById<AutoCompleteTextView>(R.id.tvSource)
         lateinit var location: String
-        location = locationSearch.text.toString()
+        location = locationSource.text.toString()
         var addressList: List<Address>? = null
 
         if (location == null || location == "") {
-            Toast.makeText(applicationContext,"provide location",Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "provide location", Toast.LENGTH_SHORT).show()
+        } else {
+            val geoCoder = Geocoder(this)
+            try {
+                addressList = geoCoder.getFromLocationName(location, 1)
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            val address = addressList!![0]
+            val latLng = LatLng(address.latitude, address.longitude)
+            latLongOrigin = (LatLng(address.latitude.toDouble(), address.longitude.toDouble()))
+            Log.e("hi", latLongOrigin.toString())
+            map!!.addMarker(MarkerOptions().position(latLng).title(location))
+            map!!.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+            Toast.makeText(applicationContext, "Here you go(: (:", Toast.LENGTH_LONG).show()
         }
-        else{
+    }
+
+    fun searchDestination() {
+        isSource = true
+        val destinationSource: AutoCompleteTextView =
+            findViewById<AutoCompleteTextView>(R.id.tvDestination)
+        lateinit var location: String
+        location = destinationSource.text.toString()
+        var addressList: List<Address>? = null
+
+        if (location == null || location == "") {
+            Toast.makeText(applicationContext, "provide location", Toast.LENGTH_SHORT).show()
+        } else {
             val geoCoder = Geocoder(this)
             try {
                 addressList = geoCoder.getFromLocationName(location, 1)
@@ -76,18 +170,21 @@ class GoogleMapsActivity : AppCompatActivity(), OnMapReadyCallback,
             }
             val address = addressList!![0]
             val latLng = LatLng(address.latitude, address.longitude)
+            latLongDestination = (LatLng(address.latitude.toDouble(), address.longitude.toDouble()))
+            Log.e("hello", latLongDestination.toString())
             map!!.addMarker(MarkerOptions().position(latLng).title(location))
             map!!.animateCamera(CameraUpdateFactory.newLatLng(latLng))
-            Toast.makeText(applicationContext,"Here you go(: (:", Toast.LENGTH_LONG).show()
+            Toast.makeText(applicationContext, "Here you go(: (:", Toast.LENGTH_LONG).show()
         }
+
+        drawRoutes()
     }
+
     private fun refreshLocation() {
         map.setOnMapClickListener {
             getLocation.text = MapsHelper.getAddress(this, it)
-
         }
     }
-
 
     //Update lastLocation with new location and update map with new location coordinates.
     private fun makeLocationCall() {
@@ -256,7 +353,6 @@ class GoogleMapsActivity : AppCompatActivity(), OnMapReadyCallback,
         getLocation.text = MapsHelper.getAddress(this, p0)
 
     }
-
 
 }
 
